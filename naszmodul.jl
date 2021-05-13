@@ -109,4 +109,21 @@ function change_volume(sound, volume)
     return new_sound
 end
 
+"""Funkcja do przycinania czasu nagrania"""
+function cutting_time(sound,fs,start=0,stop=((length(sound[:,1])-1)/fs))
+    N=length(sound[:,1]) 
+    time=LinRange(0,(N-1)/fs,N)
+    
+    if start==0
+        new_sound=sound[:,1][1:floor(Int,stop/time[end]*N)]
+    else 
+        new_sound=sound[:,1][floor(Int,start/time[end]*N):floor(Int,stop/time[end]*N)]
+    end
+        
+    N_new=length(new_sound)
+    time_new=LinRange(0,(N_new-1)/fs,N_new)
+    
+    return time_new, new_sound
+end
+
 end
