@@ -1,3 +1,17 @@
+"""
+Informacje:
+aby użyć modułu piszemy include("naszmodul.jl") (tak jak te wszystkie usingi)
+A później używamy tych funkcji robiąc np. NaszModul.dftfreq(coś tam coś tam)
+Nazwa NaszModul jest oczywiście dość robocza... xd
+"""
+
+"""Moduł z funkcjami do przetwarzania dźwięku"""
+module NaszModul
+
+using OffsetArrays #nie wiem czy wszystkie usingi mam
+using WAV
+using FFTW
+
 """Funkcja zwacająca macierz DFT"""
 function dft(signal)
     N = length(signal)
@@ -93,4 +107,6 @@ function change_volume(sound, volume)
     new_sound_fft = volume .* sound_fft
     new_sound = ifft(new_sound_fft)
     return new_sound
+end
+
 end
