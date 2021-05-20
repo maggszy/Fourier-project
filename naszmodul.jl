@@ -205,7 +205,7 @@ end
 Funkcja, która za pomocą loess znajduje przybliżenie funkcji zadanej przez tablicę 'Y'.
 Uzywamy do odszumiania nagran.
 """
-function smooothing(Y,m= 10)
+function smoothing(Y,m= 10)
     X = 1:length(Y)
     y = [loess(index, X,Y,m) for index in 1:length(X)]
     return y
