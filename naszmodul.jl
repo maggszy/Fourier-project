@@ -8,18 +8,28 @@ Nazwa NaszModul jest oczywiście dość robocza... xd
 """Moduł z funkcjami do przetwarzania dźwięku"""
 module NaszModul
 
-using OffsetArrays #nie wiem czy wszystkie usingi mam
+using OffsetArrays 
 using WAV
 using FFTW
 
-"""Funkcja zwacająca macierz DFT"""
+"""
+    dft(signal)
+
+Funkcja zwacająca tablice DFT(rozkład częstotliwości), gdzie 'signal'
+to tablica zawierająca wartości amplitudy w zależności od czasu. 
+"""
 function dft(signal)
     N = length(signal)
     zeta_powers = OffsetArray([exp( -2π *  im * n / N) for n in 0:(N-1) ], 0:(N-1))
     [  sum( signal[n + 1] * zeta_powers[(n * f) % N] for n in 0:(N-1)   ) for f in 0:(N-1) ]
 end
 
-"""Funkcja zwracająca częstotliwość próbkowania DFT"""
+"""
+    dftfreq(n,fs)
+
+Funkcja zwracająca częstotliwość próbkowania DFT, gdzie 'n' to ilość próbek,
+a 'fs' częśtotliwość próbkowania sygnału wejściowego.
+"""
 function dftfreq(n, fs)
     if n >= 1
         f = zeros(n)
@@ -39,14 +49,24 @@ function dftfreq(n, fs)
     end
 end
 
-"""Odwrotna funkcja DFT"""
+"""
+    idft(signal)
+
+Funkcja zwracająca odrtotne DFT(zmienia rozkład zależny od częstotliwości
+na taki zależny od czasu), gdzie 'signal' to tablica zawierająca zależności
+amplitudy od częstotliwości.
+"""
 function idft(signal)
     N = length(signal)
     zeta_powers = OffsetArray([exp( 2π *  im * n / N) for n in 0:(N-1) ], 0:(N-1))
     [  (1/N)*sum( signal[n + 1] * zeta_powers[(n * f) % N] for n in 0:(N-1)   ) for f in 0:(N-1) ]
 end
 
-"""Funkcja wycinająca mniejsze wielkości(tzn. cichsze, na podstawie PSD)"""
+"""
+    denoising_high(sound,fs,N,cut_point)
+
+Funkcja wycinająca mniejsze wielkości(tzn. cichsze, na podstawie PSD)
+"""
 function denoising_high(sound, fs, N,cut_point)
     tstep=1/fs
     time=LinRange(0, (N-1)/fs, N)
@@ -63,7 +83,11 @@ function denoising_high(sound, fs, N,cut_point)
     return time, PSD_clean, fhat_clean, freq
 end
 
-"""Funkcja wycinająca większe wielkości(tzn. głośniejsze, na podstawie PSD)"""
+"""
+    denoising_low(sound,fs,N,cut_point)
+
+Funkcja wycinająca większe wielkości(tzn. głośniejsze, na podstawie PSD)
+"""
 function denoising_low(sound, fs, N,cut_point)
     tstep=1/fs
     time=LinRange(0, (N-1)/fs, N) 
@@ -80,7 +104,11 @@ function denoising_low(sound, fs, N,cut_point)
     return time, PSD_clean, fhat_clean, freq
 end
 
-"""Funkcja wycinająca określoną częstotliwość"""
+"""
+    remove_frequency(sound,freq_to_remove,dt,start,stop)
+
+Funkcja wycinająca określoną częstotliwość 
+"""
 function remove_frequency(sound, freq_to_remove, dt = 0.001, start = 0, stop = 220.5)
     t = LinRange(start, stop, Int((stop - start)/dt))
     n = length(t) 
@@ -94,14 +122,27 @@ function remove_frequency(sound, freq_to_remove, dt = 0.001, start = 0, stop = 2
     real(ifft(fhat_clean)), freq, PSD_clean, fhat_clean
 end
 
-"""Funkcja do przyspieszania/zwalniania tempa odtwarzania"""
+"""
+    change_speed(sound,fs,speed,file_name)
+
+Funkcja do przyspieszania/zwalniania tempa odtwarzania, gdzie 'sound'
+to tablica zawierająca rozkład amplitudy w zależności od czasu, fs to
+częstotliwość próbkowania sygnału wejściowego, 'speed' to współczynnik 
+prędkości dźwięu w nowym pliku 
+"""
 function change_speed(sound, fs, speed, file_name)
     wavwrite(sound, file_name, Fs = fs * speed)
     sound_speeded, fs_speeded = wavread(file_name)
     return sound_speeded, fs_speeded
 end
 
-"""Funkcja do zmiany głośniści (ściszanie i zgłaśnianie)"""
+"""
+    change_volume(sound,volume)
+
+Funkcja do zmiany głośniści (ściszanie i zgłaśnianie), gdzie 'sound'
+to tablica zawierająca rozkład amplitudy w zależności od czasu, a volume
+to współczynnnik głośności dźwięku w nowym pliku. 
+"""
 function change_volume(sound, volume)
     sound_fft = fft(sound)
     new_sound_fft = volume .* sound_fft
@@ -109,7 +150,13 @@ function change_volume(sound, volume)
     return new_sound
 end
 
-"""Funkcja do przycinania czasu nagrania"""
+"""
+    cutting_time(sound,fs,start,stop)
+
+Funkcja do przycinania czasu nagrania, gdzie 'sound'to tablica zawierająca
+rozkład amplitudy w zależności od czasu, fs to częstotliwość próbkowania 
+sygnału wejściowego, a start i stop to miejsca w czasie podane w sekundach
+"""
 function cutting_time(sound,fs,start=0,stop=((length(sound[:,1])-1)/fs))
     N=length(sound[:,1]) 
     time=LinRange(0,(N-1)/fs,N)
@@ -126,7 +173,13 @@ function cutting_time(sound,fs,start=0,stop=((length(sound[:,1])-1)/fs))
     return time_new, new_sound
 end
 
-"""Oszacowanie wartości w zadanym punkcie za pomocą regresji lokalnej"""
+"""
+    loess(index,X,Y,m)
+
+Oszacowanie wartości w zadanym (wartością 'index') punkcie z tablicy 'X',
+za pomocą regresji lokalnej. Y to zbiór wartości odpowiadających tablicy'X', a 2m+1 to
+szerokośc otoczenia
+"""
 function loess(index, X,Y,m)
     if index <= m
         xs = X[1:(index+m)]
@@ -146,9 +199,13 @@ function loess(index, X,Y,m)
     return a*X[index]+b
 end
 
-"""Funkcja, która za pomocą loess znajduje przybliżenie funkcji.
-     Uzywamy do odszumiania dzwieków"""
-function denoising(Y,m= 10)
+"""
+    smoothing(Y, m)
+
+Funkcja, która za pomocą loess znajduje przybliżenie funkcji zadanej przez tablicę 'Y'.
+Uzywamy do odszumiania nagran.
+"""
+function smoothing(Y,m= 10)
     X = 1:length(Y)
     y = [loess(index, X,Y,m) for index in 1:length(X)]
     return y
