@@ -2,7 +2,7 @@
 Informacje:
 aby użyć modułu piszemy include("naszmodul.jl") (tak jak te wszystkie usingi)
 A później używamy tych funkcji robiąc np. NaszModul.dftfreq(coś tam coś tam)
-Nazwa NaszModul jest oczywiście dość robocza... xd
+Nazwa NaszModul jest oczywiście dość robocza...
 """
 
 """Moduł z funkcjami do przetwarzania dźwięku"""
@@ -15,7 +15,7 @@ using FFTW
 """
     dft(signal)
 
-Funkcja zwacająca tablice DFT(rozkład częstotliwości), gdzie 'signal'
+Funkcja zwacająca tablice DFT(rozkład amplitudy od  częstotliwości), gdzie 'signal'
 to tablica zawierająca wartości amplitudy w zależności od czasu. 
 """
 function dft(signal)
