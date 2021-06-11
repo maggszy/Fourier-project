@@ -30,19 +30,16 @@ end
 Funkcja zwracająca częstotliwość próbkowania DFT, gdzie 'n' to ilość próbek,
 a 'fs' częśtotliwość próbkowania sygnału wejściowego.
 """
-function dftfreq(n, fs)
+function dftfreq(n::Int64, fs::Float64)
     if n >= 1
-        f = zeros(n)
         if iseven(n)
-            positive = collect(0:((n/2)-1))
-            negative = collect((-n/2):1:(-1))
-        else isodd(N)
-            positive = collect(0:((n-1)/2))
-            negative = collect((-(n-1)/2):1:(-1))
+            positive = 0:((n/2)-1)
+            negative = (-n/2):(-1)
+        else
+            positive = 0:((n-1)/2)
+            negative = (-(n-1)/2):(-1)
         end
-        len = length(positive)
-        f[1:len] = positive
-        f[(len + 1):end] = negative
+        f = [positive; negative]
         return f*fs/n
     else
         throw(ArgumentError("n powinno być większe równe 1"))
@@ -62,6 +59,131 @@ function idft(signal)
     [  (1/N)*sum( signal[n + 1] * zeta_powers[(n * f) % N] for n in 0:(N-1)   ) for f in 0:(N-1) ]
 end
 
+function fft2(x)
+    N = length(x)
+    if log2(N) % 1 > 0
+        throw(ArgumentError("must be a power of 2"))
+    end
+    N_min = min(N, 32)
+    n = 0:(N_min-1)
+    M = cis.(-2π * n * n'/N_min)
+    X = M * reshape(x, (:, N_min))'
+    while size(X)[1] < N
+        X_even = X[:, 1:Int(size(X)[2] / 2)]
+        X_odd = X[:, (Int(size(X)[2] / 2)+1):end]
+        terms = cis.(-1 * π * collect(0:(size(X)[1]-1))/size(X)[1])
+        X = [X_even .+ terms .* X_odd; X_even .- terms .* X_odd]
+    end
+    return vec(X)
+end
+
+function ifft2(x)
+    N = length(x)
+    if log2(N) % 1 > 0
+        throw(ArgumentError("must be a power of 2"))
+    end
+    N_min = min(N, 32)
+    
+    n = 0:(N_min-1)
+    M = cis.(2π * n * n'/ N_min)
+    X = M * reshape(x, (:, N_min))'
+    while size(X)[1] < N
+        X_even = X[:, 1:Int(size(X)[2] / 2)]
+        X_odd = X[:, (Int(size(X)[2] / 2)+1):end]
+        terms = cis.(π * collect(0:(size(X)[1]-1))/size(X)[1])
+        X = [X_even .+ terms .* X_odd; X_even .- terms .* X_odd]
+    end
+    return (1/N).*[X[1]; reverse(X[2:end])]
+end
+
+"""
+    pow2matrix(x)
+
+Funkcja rozszerzająca macierz o zera
+tak, by długość była potęgą liczby 2"""
+function pow2matrix(x)
+    N = length(x)
+    n = nextpow(2, N)
+    M = zeros(n)
+    M[1:N] = x
+    return M, N
+end
+
+"""
+    fft_w(x)
+
+Funkcja używająca algorytmu FFT, by zwrócić macierz rozkładu amplitudy
+od częstotliwości dla macierzy "x" zawierającej wartości amplitudy w zależności od czasu. 
+"""
+function fft_w(x)
+    pow2_signal = pow2matrix(x, Float64)
+    x = pow2_signal[1]
+    N = length(x)
+    X = fft2(x)
+    return vec(X), pow2_signal[2]
+end
+
+"""
+    freqincrease(signal::Array{Float64,1}, shift::Int64)
+
+Funkcja zwiększa częstotliwość tablicy zawierającej wartości amplitudy w zależności
+od czasu (signal) o podaną liczbę cykli (shift).
+"""
+function freqincrease(signal::Array{Float64,1}, shift::Int64)
+    fft_signal = fft(signal)
+    amplitude = abs.(fft_signal)
+    angle_signal = angle.(fft_signal)
+    N = length(fft_signal)
+    amp1 = amplitude[2:Int(N/2)+1]                
+    angle1 = angle_signal[2:Int(N/2)+1] 
+    amp2 = amplitude[Int(N/2)+2:end]
+    angle2 = angle_signal[Int(N/2)+2:end] 
+    amp1shift   = [zeros(shift); amp1[1:end-shift]]
+    angle1shift = [zeros(shift); angle1[1:end-shift]]
+    amp2shift   = [amp2[shift+1:end]; zeros(shift)]
+    angle2shift = [angle2[shift+1:end]; zeros(shift)]
+    amplitude_new = [amplitude[1]; amp1shift; amp2shift]
+    angle_new  = [angle_signal[1]; angle1shift; angle2shift]
+    x = amplitude_new .* cos.(angle_new)
+    y = amplitude_new .* sin.(angle_new)
+    fft_new = x + im*y
+    return ifft(fft_new)
+end
+
+"""
+    freqreduce(signal::Array{Float64,1}, shift::Int64)
+
+Funkcja zwiększa częstotliwość tablicy zawierającej wartości amplitudy w zależności
+od czasu (signal) o podaną liczbę cykli (shift).
+"""
+function freqreduce(signal::Array{Float64,1}, shift::Int64)
+    fft_signal = fft(signal)
+    amplitude = abs.(fft_signal)
+    angle_signal = angle.(fft_signal)
+    N = length(fft_signal)
+    amp1 = amplitude[2:Int(N/2)+1]                
+    angle1 = angle_signal[2:Int(N/2)+1] 
+    amp2 = amplitude[Int(N/2)+2:end]
+    angle2 = angle_signal[Int(N/2)+2:end]
+    amp1shift   = [amp1[shift+1:end]; zeros(shift)]
+    angle1shift = [angle1[shift+1:end]; zeros(shift)]
+    amp2shift   = [zeros(shift); amp2[1:end-shift]]
+    angle2shift = [zeros(shift); angle2[1:end-shift]]
+    amplitude_new = [amplitude[1]; amp1shift; amp2shift]
+    angle_new  = [angle_signal[1]; angle1shift; angle2shift]
+    x = amplitude_new .* cos.(angle_new)
+    y = amplitude_new .* sin.(angle_new)
+    fft_new = x + im*y
+    return ifft(fft_new)
+end
+
+function fft_changer(signal::Array{Float64,1}, shift::Int64)
+    if shift >= 0
+        freqincrease(signal, shift)
+    else
+        freqreduce(signal, abs(shift))
+    end
+end
 """
     denoising_high(sound,fs,N,cut_point)
 
