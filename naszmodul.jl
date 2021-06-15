@@ -267,9 +267,7 @@ to tablica zawierająca rozkład amplitudy w zależności od czasu, a volume
 to współczynnnik głośności dźwięku w nowym pliku. 
 """
 function change_volume(sound, volume)
-    sound_fft = fft(sound)
-    new_sound_fft = volume .* sound_fft
-    new_sound = ifft(new_sound_fft)
+    new_sound=volume*sound
     return new_sound
 end
 
