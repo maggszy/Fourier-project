@@ -227,21 +227,22 @@ function denoising_low(sound, fs, N,cut_point)
 end
 
 """
-    remove_frequency(sound,freq_to_remove,dt,start,stop)
+    remove_frequency(sound,fs,N,freq_start,freq_stop)
 
-Funkcja wycinająca określoną częstotliwość 
+Funkcja wycinająca określony zakres częstotliwości
 """
-function remove_frequency(sound, freq_to_remove, dt = 0.001, start = 0, stop = 220.5)
-    t = LinRange(start, stop, Int((stop - start)/dt))
-    n = length(t) 
-    fhat = real.(fft(sound[1][:, 1])) 
-    PSD = fhat .* conj(fhat)/n 
-    freq = 1/(dt * n) .* [i for i in 1:n] 
+function remove_frequency(sound, fs, N, freq_start, freq_stop)
+    tstep = 1/fs # sample time interval
+    t = LinRange(0, (N-1)*tstep, N) # time steps
+    fstep = fs/N # freq interval
+    f = LinRange(0, (N-1)*fstep, N) # freq steps
     
-    indices = [i*dt*n != freq_to_remove for i in freq] 
-    PSD_clean = indices .* PSD 
-    fhat_clean = indices .* fhat 
-    real(ifft(fhat_clean)), freq, PSD_clean, fhat_clean
+    fhat = fft(sound)
+    fhat[floor(Int, freq_start * N/f[end]):ceil(Int, freq_stop * N/f[end])] .= 0
+    fhat[floor(Int, (f[end] - freq_stop) * N/f[end]):ceil(Int, (f[end] - freq_start) * N/f[end])] .= 0
+
+    fhat_mag = abs.(fhat)/N
+    return fhat, fhat_mag, f
 end
 
 """
