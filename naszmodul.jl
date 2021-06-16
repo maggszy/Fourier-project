@@ -147,7 +147,7 @@ function freqincrease(signal::Array{Float64,1}, shift::Int64)
     x = amplitude_new .* cos.(angle_new)
     y = amplitude_new .* sin.(angle_new)
     fft_new = x + im*y
-    return ifft(fft_new)
+    return real(ifft(fft_new))
 end
 
 """
@@ -174,7 +174,7 @@ function freqreduce(signal::Array{Float64,1}, shift::Int64)
     x = amplitude_new .* cos.(angle_new)
     y = amplitude_new .* sin.(angle_new)
     fft_new = x + im*y
-    return ifft(fft_new)
+    return real(ifft(fft_new))
 end
 
 function fft_changer(signal::Array{Float64,1}, shift::Int64)
