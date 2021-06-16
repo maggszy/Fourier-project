@@ -231,18 +231,26 @@ end
 
 Funkcja wycinająca określony zakres częstotliwości
 """
-function remove_frequency(sound, fs, N, freq_start, freq_stop)
+function remove_frequency(sound, fs, freq_start, freq_stop)
+    N = length(sound)
     tstep = 1/fs # sample time interval
     t = LinRange(0, (N-1)*tstep, N) # time steps
     fstep = fs/N # freq interval
-    f = LinRange(0, (N-1)*fstep, N) # freq steps
+    freq = LinRange(0, (N-1)*fstep, N) # freq steps
     
     fhat = fft(sound)
     fhat[floor(Int, freq_start * N/f[end]):ceil(Int, freq_stop * N/f[end])] .= 0
     fhat[floor(Int, (f[end] - freq_stop) * N/f[end]):ceil(Int, (f[end] - freq_start) * N/f[end])] .= 0
 
     fhat_mag = abs.(fhat)/N
-    return fhat, fhat_mag, f
+    return real.(ifft(fhat)), fhat, fhat_mag, freq
+end
+
+function lowpass(sound, fs, cutting_point)
+    N = length(sound)
+    fstep = fs/N # freq interval
+    freq = LinRange(0, (N-1)*fstep, N) # freq steps
+    remove_frequency(sound, fs, cutting_point, freq[Int(N/2)])
 end
 
 """
