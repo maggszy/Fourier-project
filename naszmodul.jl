@@ -239,18 +239,32 @@ function remove_frequency(sound, fs, freq_start, freq_stop)
     freq = LinRange(0, (N-1)*fstep, N) # freq steps
     
     fhat = fft(sound)
-    fhat[floor(Int, freq_start * N/f[end]):ceil(Int, freq_stop * N/f[end])] .= 0
-    fhat[floor(Int, (f[end] - freq_stop) * N/f[end]):ceil(Int, (f[end] - freq_start) * N/f[end])] .= 0
+    fhat[floor(Int, freq_start * N/freq[end]):ceil(Int, freq_stop * N/freq[end])] .= 0
+    fhat[floor(Int, (freq[end] - freq_stop) * N/freq[end]):ceil(Int, (freq[end] - freq_start) * N/freq[end])] .= 0
 
     fhat_mag = abs.(fhat)/N
     return real.(ifft(fhat)), fhat, fhat_mag, freq
 end
 
+"""
+    lowpass(sound, fs, cutting_point)
+
+
+Funkcja wycinająca z nagrania wszyskie dźwięki o częstotliwościach większych niż 'cutting_point',
+gdzie 'sound' to tablica zawierająca rozkład amplitudy w zależności od czasu, a 'fs'
+"""
 function lowpass(sound, fs, cutting_point)
     N = length(sound)
     fstep = fs/N # freq interval
     freq = LinRange(0, (N-1)*fstep, N) # freq steps
     remove_frequency(sound, fs, cutting_point, freq[Int(N/2)])
+end
+
+function highpass(sound, fs, cutting_point)
+    N = length(sound)
+    fstep = fs/N # freq interval
+    freq = LinRange(0, (N-1)*fstep, N) # freq steps
+    remove_frequency(sound, fs, 1, cutting_point)
 end
 
 """
