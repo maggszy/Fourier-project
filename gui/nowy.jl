@@ -57,6 +57,7 @@ function file_load(cos)
 end
 #okno dotyczące czasu
 function time_menu_open(cos) 
+    set_gtk_property!(main_plot,:file,"plot_time.png")
     global current_sound = temporary_sound
     global current2_sound = temporary_sound
     global current_fs = temporary_fs
@@ -141,6 +142,7 @@ end
 function freq_menu_open(cos)
     global current_sound = temporary_sound
     global current_fs = temporary_fs
+    global current2_sound = temporary_sound
     global current_fftw = fft(temporary_sound)
     global temporary_freq = fftfreq(length(current_sound),temporary_fs)
     f = Plots.plot(temporary_freq, abs.(current_fftw),xlims = (0,20000))
@@ -150,19 +152,16 @@ function freq_menu_open(cos)
     println("koniec")
 end
 function work_on_freq(cos)
-    frequencies = get_gtk_property(rm_freq,:text, String)
     shift = get_gtk_property(freq_shift,:value,Int64)
     println(shift)
     global current2_sound =  NaszModul.fft_changer(current_sound,shift)
     println("powinno zmienic czestotliwosci")
-    #if frequencies != ""
-        #list_of_freq = split(frequencies,";")
-        #println(list_of_freq)
-    #end
     current2_freq = fftfreq(length(current_sound), current_fs)
     current2_fftw = fft(current2_sound)
+    println("przeszlo?")
     f = Plots.plot(current2_freq, abs.(current2_fftw),xlims = (0,20000))
     println("plot")
+
     Plots.savefig(f,"plot_fftw.png")
     set_gtk_property!(plot_freq_menu,:file,"plot_fftw.png") 
 
@@ -186,16 +185,16 @@ function high_and_low(cos)
     current_freq = fftfreq(length(current2_sound),current_fs)
     #println(length(current_freq))
     s = Plots.plot(current_freq, abs.(current2_fftw),xlims = (0,20000))
-    Plots.savefig(s,"plot_freq.png")
+    Plots.savefig(s,"plot_fftw.png")
     println("pronl")
-    set_gtk_property!(filtr_plot,:file,"plot_freq.png")  
+    set_gtk_property!(filtr_plot,:file,"plot_fftw.png")  
     println("wykres zrobiony")
     #end
 end
 function close_filtr_window(cos)
     global current_sound = current2_sound
     global current_fftw = current2_fftw
-    set_gtk_property!(plot_freq_menu,:file,"plot_freq.png")
+    set_gtk_property!(plot_freq_menu,:file,"plot_fftw.png")
     hide(filtr_window)
 end
 
@@ -251,7 +250,6 @@ exit_time = b["exit_time"]
 accept_time = b["accept_time"]
 play_time = b["play_time"]
 freq_window = b["freq_window"]
-rm_freq = b["rm_freq"]
 exit_freq = b["exit_freq"]
 accept_freq = b["accept_freq"]
 play_freq = b["play_freq"]
