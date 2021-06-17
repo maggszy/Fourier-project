@@ -189,7 +189,7 @@ end
 
 Funkcja wycinająca mniejsze wielkości(tzn. cichsze, na podstawie PSD)
 """
-function denoising_high(sound::Array{Number, 1}, fs::Number, cut_point::Number)
+function denoising_high(sound::Array{Float64, 1}, fs::Number, cut_point::Number)
     N = length(sound)
     tstep=1/fs
     time=LinRange(0, (N-1)/fs, N)
@@ -211,7 +211,7 @@ end
 
 Funkcja wycinająca większe wielkości(tzn. głośniejsze, na podstawie PSD)
 """
-function denoising_low(sound::Array{Number, 1}, fs::Number, cut_point::Number)
+function denoising_low(sound::Array{Float64, 1}, fs::Number, cut_point::Number)
     N = length(sound)
     tstep=1/fs
     time=LinRange(0, (N-1)/fs, N) 
@@ -233,7 +233,7 @@ end
 
 Funkcja wycinająca określony zakres częstotliwości
 """
-function remove_frequency(sound::Array{Number, 1}, fs::Number, freq_start::Number, freq_stop::Number)
+function remove_frequency(sound::Array{Float64, 1}, fs::Number, freq_start::Number, freq_stop::Number)
     N = length(sound)
     tstep = 1/fs # sample time interval
     t = LinRange(0, (N-1)*tstep, N) # time steps
@@ -256,7 +256,7 @@ Funkcja wycinająca z nagrania wszyskie dźwięki o częstotliwościach większy
 gdzie 'sound' to tablica zawierająca rozkład amplitudy w zależności od czasu, a 'fs' to częstotliwość 
 próbkowania sygnału wejściowego
 """
-function lowpass(sound::Array{Number, 1}, fs::Number, cutting_point::Number)
+function lowpass(sound::Array{Float64, 1}, fs::Number, cutting_point::Number)
     N = length(sound)
     fstep = fs/N # freq interval
     freq = LinRange(0, (N-1)*fstep, N) # freq steps
@@ -271,7 +271,7 @@ Funkcja wycinająca z nagrania wszyskie dźwięki o częstotliwościach mniejszy
 gdzie 'sound' to tablica zawierająca rozkład amplitudy w zależności od czasu, a 'fs' to częstotliwość 
 próbkowania sygnału wejściowego
 """
-function highpass(sound::Array{Number, 1}, fs::Number, cutting_point::Number)
+function highpass(sound::Array{Float64, 1}, fs::Number, cutting_point::Number)
     N = length(sound)
     fstep = fs/N # freq interval
     freq = LinRange(0, (N-1)*fstep, N) # freq steps
@@ -286,7 +286,7 @@ to tablica zawierająca rozkład amplitudy w zależności od czasu, fs to
 częstotliwość próbkowania sygnału wejściowego, 'speed' to współczynnik 
 prędkości dźwięu w nowym pliku 
 """
-function change_speed(sound::Array{Number, 1}, fs::Number, speed::Number, file_name::String)
+function change_speed(sound::Array{Float64, 1}, fs::Number, speed::Number, file_name::String)
     wavwrite(sound, file_name, Fs = fs * speed)
     sound_speeded, fs_speeded = wavread(file_name)
     return sound_speeded, fs_speeded
@@ -299,7 +299,7 @@ Funkcja do zmiany głośniści (ściszanie i zgłaśnianie), gdzie 'sound'
 to tablica zawierająca rozkład amplitudy w zależności od czasu, a volume
 to współczynnnik głośności dźwięku w nowym pliku. 
 """
-function change_volume(sound::Array{Number, 1}, volume::Number)
+function change_volume(sound::Array{Float64, 1}, volume::Number)
     new_sound=volume*sound
     return new_sound
 end
@@ -311,7 +311,7 @@ Funkcja do przycinania czasu nagrania, gdzie 'sound'to tablica zawierająca
 rozkład amplitudy w zależności od czasu, fs to częstotliwość próbkowania 
 sygnału wejściowego, a start i stop to miejsca w czasie podane w sekundach
 """
-function cutting_time(sound::Array{Number, 1}, fs::Number, start::Number=0, stop::Number=((length(sound[:,1])-1)/fs))
+function cutting_time(sound::Array{Float64, 1}, fs::Number, start::Number=0, stop::Number=((length(sound[:,1])-1)/fs))
     N=length(sound[:,1]) 
     time=LinRange(0,(N-1)/fs,N)
     
@@ -359,9 +359,9 @@ end
 Funkcja, która za pomocą loess znajduje przybliżenie funkcji zadanej przez tablicę 'Y'.
 Uzywamy do odszumiania nagran.
 """
-function smoothing(Y,m= 10)
+function smoothing(Y, m = 10)
     X = 1:length(Y)
-    y = [loess(index, X,Y,m) for index in 1:length(X)]
+    y = [loess(index, X, Y, m) for index in 1:length(X)]
     return y
 end
 
