@@ -18,7 +18,7 @@ using FFTW
 Funkcja zwacająca tablice DFT(rozkład amplitudy od  częstotliwości), gdzie 'signal'
 to tablica zawierająca wartości amplitudy w zależności od czasu. 
 """
-function dft(signal)
+function dft(signal::Array{Float64, 1})
     N = length(signal)
     zeta_powers = OffsetArray([exp( -2π *  im * n / N) for n in 0:(N-1) ], 0:(N-1))
     [  sum( signal[n + 1] * zeta_powers[(n * f) % N] for n in 0:(N-1)   ) for f in 0:(N-1) ]
@@ -53,13 +53,13 @@ Funkcja zwracająca odrtotne DFT(zmienia rozkład zależny od częstotliwości
 na taki zależny od czasu), gdzie 'signal' to tablica zawierająca zależności
 amplitudy od częstotliwości.
 """
-function idft(signal)
+function idft(signal::Array{Float64, 1})
     N = length(signal)
     zeta_powers = OffsetArray([exp( 2π *  im * n / N) for n in 0:(N-1) ], 0:(N-1))
     [  (1/N)*sum( signal[n + 1] * zeta_powers[(n * f) % N] for n in 0:(N-1)   ) for f in 0:(N-1) ]
 end
 
-function fft2(x)
+function fft2(x::Array{Float64, 1})
     N = length(x)
     if log2(N) % 1 > 0
         throw(ArgumentError("must be a power of 2"))
@@ -77,7 +77,7 @@ function fft2(x)
     return vec(X)
 end
 
-function ifft2(x)
+function ifft2(x::Array{Complex{Float64},1})
     N = length(x)
     if log2(N) % 1 > 0
         throw(ArgumentError("must be a power of 2"))
@@ -101,7 +101,7 @@ end
 
 Funkcja rozszerzająca macierz o zera
 tak, by długość była potęgą liczby 2"""
-function pow2matrix(x)
+function pow2matrix(x::Array{Float64, 1})
     N = length(x)
     n = nextpow(2, N)
     M = zeros(n)
@@ -115,7 +115,7 @@ end
 Funkcja używająca algorytmu FFT, by zwrócić macierz rozkładu amplitudy
 od częstotliwości dla macierzy "x" zawierającej wartości amplitudy w zależności od czasu. 
 """
-function fft_w(x)
+function fft_w(x::Array{Float64, 1})
     pow2_signal = pow2matrix(x, Float64)
     x = pow2_signal[1]
     N = length(x)
