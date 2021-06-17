@@ -24,6 +24,9 @@ current_fs = Nothing
 current_fftw = Nothing
 current_time_range =Nothing
 current_freq = Nothing
+current2_sound = Nothing
+current2_fftw = Nothing
+current3_sound = Nothing
 #wczytywanie pliku
 function file_load(cos)
     global file = open_dialog("Wybierz plik",GtkNullContainer(),("*.wav",))
@@ -55,6 +58,7 @@ end
 #okno dotyczące czasu
 function time_menu_open(cos) 
     global current_sound = temporary_sound
+    global current2_sound = temporary_sound
     global current_fs = temporary_fs
     global current_time_range = temporary_time_range
     show(time)
@@ -65,13 +69,13 @@ function open_time_cut(cos)
     println("otwarto")
 end
 function cut_time(cos)
-    global current2_sound = current_sound
-    global current2_fs = current_fs
+    #global current3_sound = current2_sound
+    #global current2_fs = current_fs
     start = get_gtk_property(adjustment3, :value, Float64)
     stop = get_gtk_property(adjustment4,:value,Float64)
     #if start != 0 || stop != length(temporary_sound)/fs #do zmiany
         if start < stop
-            time_new, sound_new = NaszModul.cutting_time(temporary_sound,temporary_fs,start,stop)
+            time_new, sound_new = NaszModul.cutting_time(current_sound,current_fs,start,stop)
             global current2_sound = sound_new
             global current2_time_range = time_new
         end
@@ -111,20 +115,27 @@ function work_on_time(cos)
     speed = get_gtk_property(adjustment2,:value,Float16)
     smooth = get_gtk_property(smoothness,:value,Float64)
 
-    #if volume != 1
-        global current2_sound = NaszModul.change_volume(current_sound,volume)
-    #end
-    #if speed !=1
-        global current_fs = floor(speed * fs)
-        global current_time_range = LinRange(0,length(current_sound)/current_fs,length(current_sound))
-        println("aktualny czas ",length(current_sound)/current_fs)
-    #end
-
+ 
+    global current2_sound = NaszModul.change_volume(current_sound,volume)
+    global current_fs = floor(speed * fs)
+    global current_time_range = LinRange(0,length(current_sound)/current_fs,length(current_sound))
+    println("aktualny czas ",length(current_sound)/current_fs)
     p = Plots.plot(current_time_range,current2_sound)
     Plots.savefig(p,"plot_time.png")
     set_gtk_property!(main_plot,:file,"plot_time.png")
     set_gtk_property!(plot_time_menu,:file,"plot_time.png")
     print("koniec przetwarzania")
+end
+
+function time_menu_close(cos)
+    p = Plots.plot(current_time_range,current_sound)
+    Plots.savefig(p, "plot_time.png")
+    #set_gtk_property!(main_plot,:file,"plot_time.png")
+    set_gtk_property!(main_plot,:file,"plot_time.png")
+    global temporary_sound = current2_sound
+    global temporary_fs = current_fs
+    global temporary_time_range = current2_time_range
+    hide(time)
 end
 #okno częstotliwości
 function freq_menu_open(cos)
@@ -162,25 +173,21 @@ function show_filtr_window(cos)
 end
 
 function high_and_low(cos)
+    global current_sound = current2_sound
     highpass_value = get_gtk_property(highpass_scale,:value,Float64)
     lowpass_value = get_gtk_property(lowpass_scale,:value,Float64)
     #if lowpass_value != 0
     println("przeszlo pr")
     sound1,fft1, costam, f = NaszModul.lowpass(current_sound,current_fs,lowpass_value)
-    println("pronl")
     global current2_sound = sound1
-    global current2_fftw = fft1
-    #end
-    #if highpass_value != 0
-    #println("highpass")
-    sound1 ,fft1,costam,f = NaszModul.highpass(current2_sound,temporary_fs,highpass_value)
-    global current2_sound = sound1
-    global current2_fftw = fft1
-
+    sound2 ,fft2,costam2,f2 = NaszModul.highpass(current2_sound,current_fs,highpass_value)
+    global current2_sound = sound2
+    global current2_fftw = fft(current2_sound)
     current_freq = fftfreq(length(current2_sound),current_fs)
     #println(length(current_freq))
     s = Plots.plot(current_freq, abs.(current2_fftw),xlims = (0,20000))
     Plots.savefig(s,"plot_freq.png")
+    println("pronl")
     set_gtk_property!(filtr_plot,:file,"plot_freq.png")  
     println("wykres zrobiony")
     #end
@@ -193,6 +200,17 @@ function close_filtr_window(cos)
 end
 
 function freq_menu_close(cos)
+    global temporary_sound = current2_sound
+    global temporary_fftw = current2_fftw
+    current_time_range = LinRange(0,length(current2_sound)/current_fs,length(current2_sound))
+
+    println(length(current2_sound))
+    println(length(current_time_range))   
+
+    p = Plots.plot(current_time_range,current2_sound)
+    println("przeszlo")
+    Plots.savefig(p, "plot_time.png")
+    set_gtk_property!(main_plot,:file, "plot_time.png")
     hide(freq_window)
 end
 
@@ -208,13 +226,11 @@ function play_current2(cos)
     wavplay(current2_sound,current_fs)
 end
 
-function time_menu_close(cos)
-    global temporary_sound = current_sound
-    global temporary_fs = current_fs
-    global temporary_time_range = current_time_range
-    hide(time)
-end
+function save(cos)
+    file = save_dialog("Save as...",GtkNullContainer() , (GtkFileFilter("*.wav", name="All supported formats"), "*.wav"))
+    wavwrite(temporary_sound,temporary_fs, file)
 
+end
 
 b = GtkBuilder(filename="C:\\Users\\natka\\studia\\sem2\\pakiety\\Furier\\Fourier-project\\gui\\wersja2.glade")
 
@@ -262,6 +278,7 @@ play_smooth =b["play_smooth"]
 accept_smooth= b["accept_smooth"]
 filtr_plot = b["filtr_plot"]
 filtr_btn = b["filtr_btn"]
+save_to_file = b["save_to_file"]
 signal_connect(file_load,btn_file,"clicked")
 signal_connect(time_menu_open,btn_time,"clicked")
 signal_connect(time_menu_close,exit_time,"clicked")
@@ -269,7 +286,7 @@ signal_connect(freq_menu_open,btn_freq,"clicked")
 signal_connect(freq_menu_close,exit_freq,"clicked")
 signal_connect(play,btn_play,"clicked")
 signal_connect(play_current2,play_time,"clicked")
-signal_connect(play_current,play_freq,"clicked")
+signal_connect(play_current2,play_freq,"clicked")
 signal_connect(work_on_time,accept_time,"clicked")
 signal_connect(work_on_freq,accept_freq,"clicked")
 signal_connect(smooth_open,smooth_button,"clicked")
@@ -284,5 +301,6 @@ signal_connect(show_filtr_window,filtr_btn,"clicked")
 signal_connect(close_filtr_window,filtr_back_to_menu,"clicked")
 signal_connect(play_current2,play_filtr,"clicked")
 signal_connect(high_and_low,accept_filtr,"clicked")
+signal_connect(save,save_to_file,"clicked")
 showall(win)
 ""
