@@ -4,7 +4,7 @@ using WAV
 using Plots
 using FFTW
 
-include("naszmodul.jl")
+include("naszmodul.jl")#ściezka do pliku naszmodul.jl
 
 file = Nothing
 
@@ -196,7 +196,7 @@ function save(cos)
 
 end
 
-b = GtkBuilder(filename="gui\\wersja2.glade")
+b = GtkBuilder(filename="gui\\wersja2.glade")#sciezka do pliku wersja2.glade
 
 win = b["window1"]
 btn_time = b["btn_time"]
