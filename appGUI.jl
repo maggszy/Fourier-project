@@ -46,17 +46,17 @@ function file_load(cos)
     global temporary_time_range = time_range
 
     p = Plots.plot(time_range,sound,xlabel="czas",ylabel = "amplituda", label= "nagranie")
-    Plots.savefig(p,"plot_time.png")
+    Plots.savefig(p,"gui/plot_time.png")
 
-    set_gtk_property!(main_plot,:file,"plot_time.png")
-    set_gtk_property!(plot_time_menu,:file,"plot_time.png")
+    set_gtk_property!(main_plot,:file,"gui/plot_time.png")
+    set_gtk_property!(plot_time_menu,:file,"gui/plot_time.png")
     set_gtk_property!(adjustment4,:upper,length(sound)/fs)
     set_gtk_property!(adjustment3,:upper,length(sound)/fs)
     set_gtk_property!(adjustment4,:value,length(sound)/fs)
 end
 #okno dotyczące czasu
 function time_menu_open(cos) 
-    set_gtk_property!(main_plot,:file,"plot_time.png")
+    set_gtk_property!(main_plot,:file,"gui/plot_time.png")
     global current_sound = temporary_sound
     global current2_sound = temporary_sound
     global current_fs = temporary_fs
@@ -64,7 +64,7 @@ function time_menu_open(cos)
     show(time)
 end
 function open_time_cut(cos)
-    set_gtk_property!(time_cut_image,:file,"plot_time.png")
+    set_gtk_property!(time_cut_image,:file,"gui/plot_time.png")
     show(time_cut_window)
 end
 function cut_time(cos)
@@ -80,24 +80,24 @@ function close_time_cut(cos)
     global current_sound = current2_sound
     global current_time_range = current2_time_range
     p = Plots.plot(current_time_range,current_sound,xlabel="czas",ylabel = "amplituda")
-    Plots.savefig(p, "plot_time.png")
-    set_gtk_property!(plot_time_menu,:file,"plot_time.png")
+    Plots.savefig(p, "gui/plot_time.png")
+    set_gtk_property!(plot_time_menu,:file,"gui/plot_time.png")
     hide(time_cut_window)
 end
 function smooth_open(cos)
-    set_gtk_property!(smooth_plot,:file,"plot_time.png")
+    set_gtk_property!(smooth_plot,:file,"gui/plot_time.png")
     show(smooth_window)
 end
 function smooth_sound(cos)
     val = get_gtk_property(smoothness,:value,Int64)
     global current2_sound = NaszModul.smoothing(current_sound,val)
     s = Plots.plot(current_time_range,current2_sound,xlabel="czas",ylabel = "amplituda")
-    Plots.savefig(s,"plot_time.png")
-    set_gtk_property!(smooth_plot,:file,"plot_time.png")   
+    Plots.savefig(s,"gui/plot_time.png")
+    set_gtk_property!(smooth_plot,:file,"gui/plot_time.png")   
 end
 function smooth_close(cos)
     global current_sound = current2_sound
-    set_gtk_property!(plot_time_menu,:file,"plot_time.png") 
+    set_gtk_property!(plot_time_menu,:file,"gui/plot_time.png") 
     hide(smooth_window)
 end
 function work_on_time(cos)
@@ -108,15 +108,17 @@ function work_on_time(cos)
     global current_fs = floor(speed * fs)
     global current_time_range = LinRange(0,length(current_sound)/current_fs,length(current_sound))
     p = Plots.plot(current_time_range,current2_sound,xlabel="czas",ylabel = "amplituda")
-    Plots.savefig(p,"plot_time.png")
-    set_gtk_property!(main_plot,:file,"plot_time.png")
-    set_gtk_property!(plot_time_menu,:file,"plot_time.png")
+    Plots.savefig(p,"gui/plot_time.png")
+    set_gtk_property!(main_plot,:file,"gui/plot_time.png")
+    set_gtk_property!(plot_time_menu,:file,"gui/plot_time.png")
 end
 
 function time_menu_close(cos)
     p = Plots.plot(current_time_range,current_sound,xlabel="czas",ylabel = "amplituda")
-    Plots.savefig(p, "plot_time.png")
-    set_gtk_property!(main_plot,:file,"plot_time.png")
+ 
+    Plots.savefig(p, "gui/plot_time.png")
+    set_gtk_property!(main_plot,:file,"gui/plot_time.png")
+
     global temporary_sound = current2_sound
     global temporary_fs = current_fs
     global temporary_time_range = current2_time_range
@@ -130,8 +132,8 @@ function freq_menu_open(cos)
     global current_fftw = fft(temporary_sound)
     global temporary_freq = fftfreq(length(current_sound),temporary_fs)
     f = Plots.plot(temporary_freq, abs.(current_fftw),xlims = (0,20000),xlabel="częstotliwości",ylabel = "amplituda")
-    Plots.savefig(f,"plot_fftw.png")
-    set_gtk_property!(plot_freq_menu,:file,"plot_fftw.png") 
+    Plots.savefig(f,"gui/plot_fftw.png")
+    set_gtk_property!(plot_freq_menu,:file,"gui/plot_fftw.png") 
     show(freq_window)
 end
 function work_on_freq(cos)
@@ -140,12 +142,12 @@ function work_on_freq(cos)
     current2_freq = fftfreq(length(current_sound), current_fs)
     current2_fftw = fft(current2_sound)
     f = Plots.plot(current2_freq, abs.(current2_fftw),xlims = (0,20000),xlabel="częstotliwości",ylabel = "amplituda")
-    Plots.savefig(f,"plot_fftw.png")
-    set_gtk_property!(plot_freq_menu,:file,"plot_fftw.png") 
+    Plots.savefig(f,"gui/plot_fftw.png")
+    set_gtk_property!(plot_freq_menu,:file,"gui/plot_fftw.png") 
 
 end
 function show_filtr_window(cos)
-    set_gtk_property!(filtr_plot,:file,"plot_fftw.png")
+    set_gtk_property!(filtr_plot,:file,"gui/plot_fftw.png")
     show(filtr_window)
 end
 
@@ -160,13 +162,13 @@ function high_and_low(cos)
     global current2_fftw = fft(current2_sound)
     current_freq = fftfreq(length(current2_sound),current_fs)
     s = Plots.plot(current_freq, abs.(current2_fftw),xlims = (0,20000),xlabel="częstotliwości",ylabel = "amplituda")
-    Plots.savefig(s,"plot_fftw.png")
-    set_gtk_property!(filtr_plot,:file,"plot_fftw.png")  
+    Plots.savefig(s,"gui/plot_fftw.png")
+    set_gtk_property!(filtr_plot,:file,"gui/plot_fftw.png")  
 end
 function close_filtr_window(cos)
     global current_sound = current2_sound
     global current_fftw = current2_fftw
-    set_gtk_property!(plot_freq_menu,:file,"plot_fftw.png")
+    set_gtk_property!(plot_freq_menu,:file,"gui/plot_fftw.png")
     hide(filtr_window)
 end
 
@@ -175,8 +177,8 @@ function freq_menu_close(cos)
     global temporary_fftw = current2_fftw
     current_time_range = LinRange(0,length(current2_sound)/current_fs,length(current2_sound))
     p = Plots.plot(current_time_range,current2_sound,xlabel="czas",ylabel = "amplituda")
-    Plots.savefig(p, "plot_time.png")
-    set_gtk_property!(main_plot,:file, "plot_time.png")
+    Plots.savefig(p, "gui/plot_time.png")
+    set_gtk_property!(main_plot,:file, "gui/plot_time.png")
     hide(freq_window)
 end
 
@@ -196,7 +198,7 @@ function save(cos)
 
 end
 
-b = GtkBuilder(filename="gui\\wersja2.glade")#sciezka do pliku wersja2.glade
+b = GtkBuilder(filename="wersja2.glade")#sciezka do pliku wersja2.glade
 
 win = b["window1"]
 btn_time = b["btn_time"]
