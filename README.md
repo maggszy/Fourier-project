@@ -41,7 +41,7 @@
 
 
 
-## Ho to run this program?
+## How to run this program?
 1. Clone the project to your directory: `git clone https://github.com/Klaudia226/Fourier-project.git`.
 2. In Julia's terminal type:
    `using Pkg; Pkg.add(["OffsetArrays","WAV", "FFTW", "Plots","Gtk"])`
