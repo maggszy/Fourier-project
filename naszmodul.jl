@@ -215,7 +215,7 @@ function denoising_high(sound::Array{Float64, 1}, fs::Number, cut_point::Number)
     freq = LinRange(0, (N-1)*freq_step, N)
     
     fhat=fft(sound)
-    PSD = real.(fhat .* conj(fhat)/N) #power spectral density
+    PSD = real.(fhat .* conj(fhat)/N)
     
     indices=[i > cut_point for i in PSD]
     PSD_clean= indices .* PSD
@@ -253,10 +253,10 @@ Funkcja wycinająca określony zakres częstotliwości
 """
 function remove_frequency(sound::Array{Float64, 1}, fs::Number, freq_start::Number, freq_stop::Number)
     N = length(sound)
-    tstep = 1/fs # sample time interval
-    t = LinRange(0, (N-1)*tstep, N) # time steps
-    fstep = fs/N # freq interval
-    freq = LinRange(0, (N-1)*fstep, N) # freq steps
+    tstep = 1/fs
+    t = LinRange(0, (N-1)*tstep, N)
+    fstep = fs/N
+    freq = LinRange(0, (N-1)*fstep, N)
     
     fhat = fft(sound)
     fhat[floor(Int, freq_start * N/freq[end]):ceil(Int, freq_stop * N/freq[end])] .= 0
@@ -276,8 +276,8 @@ próbkowania sygnału wejściowego
 """
 function lowpass(sound::Array{Float64, 1}, fs::Number, cutting_point::Number)
     N = length(sound)
-    fstep = fs/N # freq interval
-    freq = LinRange(0, (N-1)*fstep, N) # freq steps
+    fstep = fs/N
+    freq = LinRange(0, (N-1)*fstep, N)
     remove_frequency(sound, fs, cutting_point, freq[Int(N/2)])
 end
 
@@ -291,8 +291,8 @@ próbkowania sygnału wejściowego
 """
 function highpass(sound::Array{Float64, 1}, fs::Number, cutting_point::Number)
     N = length(sound)
-    fstep = fs/N # freq interval
-    freq = LinRange(0, (N-1)*fstep, N) # freq steps
+    fstep = fs/N
+    freq = LinRange(0, (N-1)*fstep, N)
     remove_frequency(sound, fs, 1, cutting_point)
 end
 
