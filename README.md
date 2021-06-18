@@ -7,7 +7,7 @@
 
  ### Here are the functionalities:
  * changing frequency,
- * denoising based on the DSP,
+ * denoising based on the PSD,
  * removing frequencies,
  * lowpass and highpass,
  * changing speed,
