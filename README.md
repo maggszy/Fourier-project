@@ -1,4 +1,20 @@
- # Processing and analysis of the sound in Julia
+ # <center> Processing and analysis of the sound in Julia </center>
+
+ ## Short description
+
+ This project was created during the Mathematical Packages course by students from Faculty of Pure and Applied Mathematics at the Wroclaw University of Science and Technolody. 
+ It is used for processing and analysis of the sound.Grapgical User Interface gives all of the funcionalities written in this project.
+
+ ### Here are the functionalities:
+ * changing frequency,
+ * denoising based on the DSP,
+ * removing frequencies,
+ * lowpass and highpass,
+ * changing speed,
+ * changing volume,
+ * cutting time,
+ * smoothig signal. 
+
 
 ## Authors:
 1. Jaworek Klaudia
@@ -19,20 +35,6 @@
 
 **Gtk** - package providing Graphical User Interface.
 
- ## Short description
-
- This project was created during the Mathematical Packages course by students from Faculty of Pure and Applied Mathematics at the Wroclaw University of Science and Technolody. 
- It is used for processing and analysis of the sound.Grapgical User Interface gives all of the funcionalities written in this project.
-
- ### Here are the functionalities:
- * changing frequency,
- * denoising based on the DSP,
- * removing frequencies,
- * lowpass and highpass,
- * changing speed,
- * changing volume,
- * cutting time,
- * smoothig signal.
 
 ## Some pictures showing our GUI:
 ![](/.png)
