@@ -13,8 +13,8 @@ to tablica zawierająca wartości amplitudy w zależności od czasu.
 """
 function dft(signal::Array{Float64, 1})
     N = length(signal)
-    zeta_powers = OffsetArray([exp( -2π *  im * n / N) for n in 0:(N-1) ], 0:(N-1))
-    [  sum( signal[n + 1] * zeta_powers[(n * f) % N] for n in 0:(N-1)   ) for f in 0:(N-1) ]
+    zeta_powers = OffsetArray([exp(-2π * im * n / N) for n in 0:(N-1) ], 0:(N-1))
+    [sum(signal[n + 1] * zeta_powers[(n * f) % N] for n in 0:(N-1)) for f in 0:(N-1)]
 end
 
 """
@@ -48,8 +48,8 @@ amplitudy od częstotliwości.
 """
 function idft(signal::Array{Complex{Float64},1})
     N = length(signal)
-    zeta_powers = OffsetArray([exp( 2π *  im * n / N) for n in 0:(N-1) ], 0:(N-1))
-    [  (1/N)*sum( signal[n + 1] * zeta_powers[(n * f) % N] for n in 0:(N-1)   ) for f in 0:(N-1) ]
+    zeta_powers = OffsetArray([exp(2π * im * n / N) for n in 0:(N-1) ], 0:(N-1))
+    [(1/N)*sum(signal[n+1] * zeta_powers[(n*f) % N] for n in 0:(N-1)) for f in 0:(N-1)]
 end
 
 """
@@ -381,7 +381,7 @@ function smoothing(Y, m = 10)
 end
 
 """
-    from_behind(sound)
+    from_behind(sound::Array{Float64, 1})
 
 Funkcja sluzy do zapisu sygnału od końca"""
 function from_behind(sound::Array{Float64, 1})
