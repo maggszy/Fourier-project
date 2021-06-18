@@ -36,8 +36,9 @@
 
 
 ## Some pictures showing our GUI:
-![](/.png)
-
+![main menu](./gui/main_menu.png)
+![time menu](./gui/time_menu.png)
+![frequency menu](./gui/freq_menu.png)
 
 
 ## How to run this program?
