@@ -1,4 +1,5 @@
-"""Moduł z funkcjami do przetwarzania dźwięku"""
+"""Moduł z funkcjami do przetwarzania dźwięku."""
+
 module NaszModul
 
 using OffsetArrays 
@@ -21,7 +22,7 @@ end
     dftfreq(n::Int64, fs::Float64)
 
 Funkcja zwracająca częstotliwość próbkowania DFT, gdzie 'n' to ilość próbek,
-a 'fs' częśtotliwość próbkowania sygnału wejściowego.
+a 'fs' częstotliwość próbkowania sygnału wejściowego.
 """
 function dftfreq(n::Int64, fs::Float64)
     if n >= 1
@@ -42,7 +43,7 @@ end
 """
     idft(signal::Array{Complex{Float64},1})
 
-Funkcja zwracająca odwrotne DFT(zmienia rozkład zależny od częstotliwości
+Funkcja zwracająca odwrotne DFT (zmienia rozkład zależny od częstotliwości
 na taki zależny od czasu), gdzie 'signal' to tablica zawierająca zależności
 amplitudy od częstotliwości.
 """
@@ -55,8 +56,9 @@ end
 """
     fft2(x::Array{Float64, 1})
 
-Funkcja używająca algorytmu FFT, by zwrócić macierz rozkładu amplitudy
-od częstotliwości dla macierzy "x" zawierającej wartości amplitudy w zależności od czasu.
+Funkcja używająca FFT, opartego na algortymie Cooley–Tukey,
+by zwrócić macierz rozkładu amplitudy od częstotliwości
+dla macierzy "x" zawierającej wartości amplitudy w zależności od czasu.
 Długość macierzy "x" musi być potęgą liczby 2.
 """
 function fft2(x::Array{Float64, 1})
@@ -80,7 +82,7 @@ end
 """
     ifft2(x::Array{Complex{Float64},1})
 
-Funkcja odwrotna do funkcji fft, z macierzy zawierającej wartości amplitudy
+Funkcja odwrotna do funkcji FFT, z macierzy zawierającej wartości amplitudy
 od częstotliwości, zwraca macierz zawierającą wartości amplitudy zależne od czasu.
 Długość macierzy "x" musi być potęgą liczby 2.
 """
@@ -121,7 +123,8 @@ end
     fft_w(x::Array{Float64, 1})
 
 Funkcja używająca algorytmu FFT, by zwrócić macierz rozkładu amplitudy
-od częstotliwości dla macierzy "x" zawierającej wartości amplitudy w zależności od czasu. 
+od częstotliwości dla macierzy "x" zawierającej wartości amplitudy w zależności od czasu.
+Zwraca tą macierz oraz miejsce od którego obciąć zera.
 """
 function fft_w(x::Array{Float64, 1})
     pow2_signal = pow2matrix(x, Float64)
