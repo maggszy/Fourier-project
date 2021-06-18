@@ -346,13 +346,13 @@ function cutting_time(sound::Array{Float64, 1}, fs::Number, start::Number=0, sto
 end
 
 """
-    loess(index::Number,X,Y,m)
+    loess(index::Int64, X::Array{Float64, 1}, Y::Array{Float64, 1}, m::Int64)
 
 Oszacowanie wartości w zadanym (wartością 'index') punkcie z tablicy 'X',
 za pomocą regresji lokalnej. Y to zbiór wartości odpowiadających tablicy'X', a 2m+1 to
 szerokośc otoczenia
 """
-function loess(index::Number, X,Y,m)
+function loess(index::Int64, X::Array{Float64, 1}, Y::Array{Float64, 1}, m::Int64)
     if index <= m
         xs = X[1:(index+m)]
         ys = Y[1:(index+m)]
@@ -372,12 +372,12 @@ function loess(index::Number, X,Y,m)
 end
 
 """
-    smoothing(Y, m)
+    smoothing(Y::Array{Float64, 1}, m::Int64)
 
 Funkcja, która za pomocą loess znajduje przybliżenie funkcji zadanej przez tablicę 'Y'.
 Uzywamy do odszumiania nagran.
 """
-function smoothing(Y, m = 10)
+function smoothing(Y::Array{Float64, 1}, m::Int64 = 10)
     X = 1:length(Y)
     y = [loess(index, X, Y, m) for index in 1:length(X)]
     return y
