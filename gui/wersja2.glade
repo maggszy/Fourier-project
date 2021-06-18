@@ -10,7 +10,7 @@
   </object>
   <object class="GtkAdjustment" id="adjustment2">
     <property name="lower">0.25</property>
-    <property name="upper">5</property>
+    <property name="upper">3</property>
     <property name="value">1</property>
     <property name="step-increment">0.25</property>
     <property name="page-increment">10</property>
@@ -85,7 +85,7 @@
                 <property name="can-focus">True</property>
                 <property name="margin-start">25</property>
                 <property name="adjustment">adjustment2</property>
-                <property name="round-digits">1</property>
+                <property name="round-digits">2</property>
               </object>
               <packing>
                 <property name="left-attach">1</property>
@@ -233,7 +233,7 @@
   <object class="GtkApplicationWindow" id="time_cut_window">
     <property name="can-focus">False</property>
     <child>
-      <!-- n-columns=3 n-rows=6 -->
+      <!-- n-columns=2 n-rows=6 -->
       <object class="GtkGrid">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
@@ -242,23 +242,14 @@
         <property name="margin-top">25</property>
         <property name="margin-bottom">25</property>
         <child>
-          <object class="GtkButton" id="accept_cut_time">
-            <property name="label" translatable="yes">zaakceptuj i wróć</property>
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-          </object>
-          <packing>
-            <property name="left-attach">1</property>
-            <property name="top-attach">5</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkScale">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
+            <property name="margin-start">25</property>
+            <property name="margin-end">15</property>
             <property name="adjustment">adjustment3</property>
             <property name="round-digits">1</property>
+            <property name="has-origin">False</property>
           </object>
           <packing>
             <property name="left-attach">1</property>
@@ -269,8 +260,11 @@
           <object class="GtkScale">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
+            <property name="margin-start">25</property>
+            <property name="margin-end">15</property>
             <property name="adjustment">adjustment4</property>
             <property name="round-digits">1</property>
+            <property name="has-origin">False</property>
           </object>
           <packing>
             <property name="left-attach">1</property>
@@ -314,43 +308,60 @@ nagrania</property>
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="play_cut_time">
-            <property name="label" translatable="yes">odsłuchaj</property>
+          <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
+            <property name="can-focus">False</property>
+            <property name="margin-start">100</property>
+            <property name="margin-end">100</property>
+            <property name="margin-top">30</property>
+            <property name="margin-bottom">30</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">15</property>
+            <child>
+              <object class="GtkButton" id="accept_time_cut">
+                <property name="label" translatable="yes">zatwierdź</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="play_cut_time">
+                <property name="label" translatable="yes">odsłuchaj</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="accept_cut_time">
+                <property name="label" translatable="yes">zaakceptuj i wróć</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
           </object>
           <packing>
-            <property name="left-attach">1</property>
-            <property name="top-attach">4</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="accept_time_cut">
-            <property name="label" translatable="yes">zatwierdź</property>
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-          </object>
-          <packing>
-            <property name="left-attach">1</property>
+            <property name="left-attach">0</property>
             <property name="top-attach">3</property>
+            <property name="width">2</property>
           </packing>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
         </child>
         <child>
           <placeholder/>
@@ -376,8 +387,8 @@ nagrania</property>
     <property name="page-increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustment6">
-    <property name="lower">-1000</property>
-    <property name="upper">1000</property>
+    <property name="lower">-20000</property>
+    <property name="upper">20000</property>
     <property name="step-increment">1</property>
     <property name="page-increment">10</property>
   </object>
@@ -413,34 +424,12 @@ nagrania</property>
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="label" translatable="yes">częstotliwości
-do wycięcia</property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
                 <property name="label" translatable="yes">manipuluj 
 częstotliwością</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
                 <property name="top-attach">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkEntry" id="rm_freq">
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-              </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">1</property>
               </packing>
             </child>
             <child>
@@ -484,6 +473,12 @@ częstotliwością</property>
                 <property name="left-attach">1</property>
                 <property name="top-attach">4</property>
               </packing>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
             </child>
             <child>
               <placeholder/>
@@ -580,6 +575,7 @@ częstotliwością</property>
   </object>
   <object class="GtkAdjustment" id="lowpass_scale">
     <property name="upper">20000</property>
+    <property name="value">20000</property>
     <property name="step-increment">1</property>
     <property name="page-increment">10</property>
   </object>
@@ -598,6 +594,9 @@ częstotliwością</property>
           <object class="GtkLabel">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="margin-start">15</property>
+            <property name="margin-end">15</property>
+            <property name="margin-top">30</property>
             <property name="label" translatable="yes">wytnij poniżej</property>
           </object>
           <packing>
@@ -609,6 +608,8 @@ częstotliwością</property>
           <object class="GtkLabel">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="margin-top">15</property>
+            <property name="margin-bottom">30</property>
             <property name="label" translatable="yes">wytnij powyżej</property>
           </object>
           <packing>
@@ -620,9 +621,13 @@ częstotliwością</property>
           <object class="GtkScale" id="highpass">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
+            <property name="margin-start">25</property>
+            <property name="margin-end">20</property>
+            <property name="margin-top">30</property>
             <property name="adjustment">highpass_scale</property>
             <property name="round-digits">1</property>
             <property name="digits">0</property>
+            <property name="has-origin">False</property>
           </object>
           <packing>
             <property name="left-attach">1</property>
@@ -634,55 +639,19 @@ częstotliwością</property>
           <object class="GtkScale">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
+            <property name="margin-start">25</property>
+            <property name="margin-end">20</property>
+            <property name="margin-top">15</property>
+            <property name="margin-bottom">30</property>
             <property name="adjustment">lowpass_scale</property>
             <property name="round-digits">1</property>
             <property name="digits">0</property>
+            <property name="has-origin">False</property>
           </object>
           <packing>
             <property name="left-attach">1</property>
             <property name="top-attach">2</property>
             <property name="width">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="accept_filtr">
-            <property name="label" translatable="yes">zatwierdź</property>
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <property name="margin-top">10</property>
-            <property name="margin-bottom">10</property>
-          </object>
-          <packing>
-            <property name="left-attach">1</property>
-            <property name="top-attach">3</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="play_filtr">
-            <property name="label" translatable="yes">odsłuchaj</property>
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <property name="margin-top">10</property>
-            <property name="margin-bottom">10</property>
-          </object>
-          <packing>
-            <property name="left-attach">1</property>
-            <property name="top-attach">4</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="filtr_back_to_menu">
-            <property name="label" translatable="yes">wróć do menu</property>
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <property name="margin-top">10</property>
-          </object>
-          <packing>
-            <property name="left-attach">1</property>
-            <property name="top-attach">5</property>
           </packing>
         </child>
         <child>
@@ -697,13 +666,54 @@ częstotliwością</property>
           </packing>
         </child>
         <child>
-          <placeholder/>
+          <object class="GtkButton" id="accept_filtr">
+            <property name="label" translatable="yes">zatwierdź</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="margin-start">70</property>
+            <property name="margin-end">30</property>
+            <property name="margin-top">10</property>
+            <property name="margin-bottom">10</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">3</property>
+            <property name="width">2</property>
+          </packing>
         </child>
         <child>
-          <placeholder/>
+          <object class="GtkButton" id="play_filtr">
+            <property name="label" translatable="yes">odsłuchaj</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="margin-start">70</property>
+            <property name="margin-end">30</property>
+            <property name="margin-top">10</property>
+            <property name="margin-bottom">10</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">4</property>
+            <property name="width">2</property>
+          </packing>
         </child>
         <child>
-          <placeholder/>
+          <object class="GtkButton" id="filtr_back_to_menu">
+            <property name="label" translatable="yes">wróć do menu</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="margin-start">70</property>
+            <property name="margin-end">30</property>
+            <property name="margin-top">10</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">5</property>
+            <property name="width">2</property>
+          </packing>
         </child>
         <child>
           <placeholder/>
@@ -747,7 +757,8 @@ częstotliwością</property>
             <property name="margin-end">25</property>
             <property name="margin-top">25</property>
             <property name="margin-bottom">25</property>
-            <property name="label" translatable="yes">wygłądzenie</property>
+            <property name="label" translatable="yes">Wygładzanie</property>
+            <property name="width-chars">30</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -774,8 +785,13 @@ częstotliwością</property>
             <property name="can-focus">True</property>
             <property name="margin-start">50</property>
             <property name="margin-end">50</property>
+            <property name="margin-top">30</property>
+            <property name="margin-bottom">30</property>
             <property name="adjustment">smoothness</property>
-            <property name="round-digits">1</property>
+            <property name="restrict-to-fill-level">False</property>
+            <property name="round-digits">0</property>
+            <property name="digits">0</property>
+            <property name="has-origin">False</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -784,46 +800,56 @@ częstotliwością</property>
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="accept_smooth">
-            <property name="label" translatable="yes">zatwierdź</property>
+          <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <property name="margin-start">25</property>
-            <property name="margin-end">25</property>
-            <property name="margin-top">25</property>
-            <property name="margin-bottom">25</property>
+            <property name="can-focus">False</property>
+            <property name="margin-top">20</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">15</property>
+            <child>
+              <object class="GtkButton" id="accept_smooth">
+                <property name="label" translatable="yes">zatwierdź</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="play_smooth">
+                <property name="label" translatable="yes">Odsłuchaj</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="accept_smoot">
+                <property name="label" translatable="yes">zaakceptuj i wróć</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">3</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="play_smooth">
-            <property name="label" translatable="yes">Odsłuchaj</property>
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">4</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="accept_smoot">
-            <property name="label" translatable="yes">zaakceptuj i wróć</property>
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">5</property>
           </packing>
         </child>
       </object>
@@ -845,30 +871,22 @@ częstotliwością</property>
           <object class="GtkBox">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="orientation">vertical</property>
             <child>
               <object class="GtkButton" id="btn_file">
-                <property name="label" translatable="yes">wybierz plik</property>
+                <property name="label" translatable="yes">załaduj plik</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
+                <property name="margin-start">40</property>
+                <property name="margin-end">40</property>
+                <property name="margin-top">20</property>
+                <property name="margin-bottom">20</property>
               </object>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
                 <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="play">
-                <property name="label" translatable="yes">odsłuchaj</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
               </packing>
             </child>
           </object>
@@ -898,9 +916,13 @@ częstotliwością</property>
           <object class="GtkBox">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="margin-start">15</property>
+            <property name="margin-end">15</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">15</property>
             <child>
-              <object class="GtkButton" id="btn_time">
-                <property name="label" translatable="yes">time</property>
+              <object class="GtkButton" id="play">
+                <property name="label" translatable="yes">odsłuchaj</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
@@ -912,8 +934,8 @@ częstotliwością</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btn_freq">
-                <property name="label" translatable="yes">button</property>
+              <object class="GtkButton" id="btn_time">
+                <property name="label" translatable="yes">działaj na czasie</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
@@ -922,6 +944,32 @@ częstotliwością</property>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_freq">
+                <property name="label" translatable="yes">działaj na częstotliwościach</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="save_to_file">
+                <property name="label" translatable="yes">zapisz do pliku</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
               </packing>
             </child>
           </object>

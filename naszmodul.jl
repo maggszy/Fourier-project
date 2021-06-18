@@ -380,4 +380,12 @@ function smoothing(Y, m = 10)
     return y
 end
 
+"""
+    from_behind(sound)
+
+Funkcja sluzy do zapisu sygnału od końca"""
+function from_behind(sound::Array{Float64, 1})
+    return reverse(sound)
+end
+
 end
