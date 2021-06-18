@@ -3,7 +3,7 @@
  ## Short description
 
  This project was created during the Mathematical Packages course by students from Faculty of Pure and Applied Mathematics at the Wroclaw University of Science and Technolody. 
- It is used for processing and analysis of the sound.Grapgical User Interface gives all of the funcionalities written in this project.
+ It is used for processing and analysis of the sound.Graphical User Interface gives all of the funcionalities written in this project.
 
  ### Here are the functionalities:
  * changing frequency,
@@ -13,7 +13,8 @@
  * changing speed,
  * changing volume,
  * cutting time,
- * smoothig signal. 
+ * smoothig signal,
+ * calculating FFT and IFFT.
 
 
 ## Authors:
@@ -25,15 +26,13 @@
 ## Technologies:
 **Julia** - programming language, version 1.5.3 is recommended.
 
-**OffsetArrays** - package providing arrays.
+**WAV** - package that enable working with sound files, give the ability to read them as a matrix.
 
-**WAV** - package that enable working with sound files.
+**FFTW** - package used in processing sounds, used to speed up the calculations in the application.
 
-**FFTW** - package used in processing sounds.
+**Plots** - package for visualisation, used to create graphs of our sound.
 
-**Plots** - package for visualisation.
-
-**Gtk** - package providing Graphical User Interface.
+**Gtk** - package providing Graphical User Interface, used to create our application.
 
 
 ## Some pictures showing our GUI:
