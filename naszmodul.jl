@@ -1,11 +1,5 @@
-"""
-Informacje:
-aby użyć modułu piszemy include("naszmodul.jl") (tak jak te wszystkie usingi)
-A później używamy tych funkcji robiąc np. NaszModul.dftfreq(coś tam coś tam)
-Nazwa NaszModul jest oczywiście dość robocza...
-"""
+"""Moduł z funkcjami do przetwarzania dźwięku."""
 
-"""Moduł z funkcjami do przetwarzania dźwięku"""
 module NaszModul
 
 using OffsetArrays 
@@ -13,22 +7,22 @@ using WAV
 using FFTW
 
 """
-    dft(signal)
+    dft(signal::Array{Float64, 1})
 
 Funkcja zwacająca tablice DFT(rozkład amplitudy od  częstotliwości), gdzie 'signal'
 to tablica zawierająca wartości amplitudy w zależności od czasu. 
 """
 function dft(signal::Array{Float64, 1})
     N = length(signal)
-    zeta_powers = OffsetArray([exp( -2π *  im * n / N) for n in 0:(N-1) ], 0:(N-1))
-    [  sum( signal[n + 1] * zeta_powers[(n * f) % N] for n in 0:(N-1)   ) for f in 0:(N-1) ]
+    zeta_powers = OffsetArray([exp(-2π * im * n / N) for n in 0:(N-1) ], 0:(N-1))
+    [sum(signal[n + 1] * zeta_powers[(n * f) % N] for n in 0:(N-1)) for f in 0:(N-1)]
 end
 
 """
-    dftfreq(n,fs)
+    dftfreq(n::Int64, fs::Float64)
 
 Funkcja zwracająca częstotliwość próbkowania DFT, gdzie 'n' to ilość próbek,
-a 'fs' częśtotliwość próbkowania sygnału wejściowego.
+a 'fs' częstotliwość próbkowania sygnału wejściowego.
 """
 function dftfreq(n::Int64, fs::Float64)
     if n >= 1
@@ -47,18 +41,26 @@ function dftfreq(n::Int64, fs::Float64)
 end
 
 """
-    idft(signal)
+    idft(signal::Array{Complex{Float64},1})
 
-Funkcja zwracająca odrtotne DFT(zmienia rozkład zależny od częstotliwości
+Funkcja zwracająca odwrotne DFT (zmienia rozkład zależny od częstotliwości
 na taki zależny od czasu), gdzie 'signal' to tablica zawierająca zależności
 amplitudy od częstotliwości.
 """
-function idft(signal::Array{Float64, 1})
+function idft(signal::Array{Complex{Float64},1})
     N = length(signal)
-    zeta_powers = OffsetArray([exp( 2π *  im * n / N) for n in 0:(N-1) ], 0:(N-1))
-    [  (1/N)*sum( signal[n + 1] * zeta_powers[(n * f) % N] for n in 0:(N-1)   ) for f in 0:(N-1) ]
+    zeta_powers = OffsetArray([exp(2π * im * n / N) for n in 0:(N-1) ], 0:(N-1))
+    [(1/N)*sum(signal[n+1] * zeta_powers[(n*f) % N] for n in 0:(N-1)) for f in 0:(N-1)]
 end
 
+"""
+    fft2(x::Array{Float64, 1})
+
+Funkcja używająca FFT, opartego na algortymie Cooley–Tukey,
+by zwrócić macierz rozkładu amplitudy od częstotliwości
+dla macierzy "x" zawierającej wartości amplitudy w zależności od czasu.
+Długość macierzy "x" musi być potęgą liczby 2.
+"""
 function fft2(x::Array{Float64, 1})
     N = length(x)
     if log2(N) % 1 > 0
@@ -77,6 +79,13 @@ function fft2(x::Array{Float64, 1})
     return vec(X)
 end
 
+"""
+    ifft2(x::Array{Complex{Float64},1})
+
+Funkcja odwrotna do funkcji FFT, z macierzy zawierającej wartości amplitudy
+od częstotliwości, zwraca macierz zawierającą wartości amplitudy zależne od czasu.
+Długość macierzy "x" musi być potęgą liczby 2.
+"""
 function ifft2(x::Array{Complex{Float64},1})
     N = length(x)
     if log2(N) % 1 > 0
@@ -97,10 +106,11 @@ function ifft2(x::Array{Complex{Float64},1})
 end
 
 """
-    pow2matrix(x)
+    pow2matrix(x::Array{Float64, 1})
 
 Funkcja rozszerzająca macierz o zera
-tak, by długość była potęgą liczby 2"""
+tak, by długość była potęgą liczby 2.
+"""
 function pow2matrix(x::Array{Float64, 1})
     N = length(x)
     n = nextpow(2, N)
@@ -110,10 +120,11 @@ function pow2matrix(x::Array{Float64, 1})
 end
 
 """
-    fft_w(x)
+    fft_w(x::Array{Float64, 1})
 
 Funkcja używająca algorytmu FFT, by zwrócić macierz rozkładu amplitudy
-od częstotliwości dla macierzy "x" zawierającej wartości amplitudy w zależności od czasu. 
+od częstotliwości dla macierzy "x" zawierającej wartości amplitudy w zależności od czasu.
+Zwraca tą macierz oraz miejsce od którego obciąć zera.
 """
 function fft_w(x::Array{Float64, 1})
     pow2_signal = pow2matrix(x, Float64)
@@ -177,6 +188,13 @@ function freqreduce(signal::Array{Float64,1}, shift::Int64)
     return real(ifft(fft_new))
 end
 
+"""
+    fft_changer(signal::Array{Float64,1}, shift::Int64)
+
+Funkcja zwiększa częstotliwość tablicy zawierającej wartości amplitudy w zależności
+od czasu (signal) o podaną liczbę cykli (shift).
+Gdy parametr shift jest ujemny, funkcja zmniejsza częstotliwość.
+"""
 function fft_changer(signal::Array{Float64,1}, shift::Int64)
     if shift >= 0
         freqincrease(signal, shift)
@@ -185,7 +203,7 @@ function fft_changer(signal::Array{Float64,1}, shift::Int64)
     end
 end
 """
-    denoising_high(sound,fs,N,cut_point)
+    denoising_high(sound::Array{Float64, 1}, fs::Number, cut_point::Number)
 
 Funkcja wycinająca mniejsze wielkości(tzn. cichsze, na podstawie PSD)
 """
@@ -197,7 +215,7 @@ function denoising_high(sound::Array{Float64, 1}, fs::Number, cut_point::Number)
     freq = LinRange(0, (N-1)*freq_step, N)
     
     fhat=fft(sound)
-    PSD = real.(fhat .* conj(fhat)/N) #power spectral density
+    PSD = real.(fhat .* conj(fhat)/N)
     
     indices=[i > cut_point for i in PSD]
     PSD_clean= indices .* PSD
@@ -207,7 +225,7 @@ function denoising_high(sound::Array{Float64, 1}, fs::Number, cut_point::Number)
 end
 
 """
-    denoising_low(sound,fs,N,cut_point)
+    denoising_low(sound::Array{Float64, 1}, fs::Number, cut_point::Number)
 
 Funkcja wycinająca większe wielkości(tzn. głośniejsze, na podstawie PSD)
 """
@@ -229,16 +247,16 @@ function denoising_low(sound::Array{Float64, 1}, fs::Number, cut_point::Number)
 end
 
 """
-    remove_frequency(sound,fs,N,freq_start,freq_stop)
+    remove_frequency(sound::Array{Float64, 1}, fs::Number, freq_start::Number, freq_stop::Number)
 
 Funkcja wycinająca określony zakres częstotliwości
 """
 function remove_frequency(sound::Array{Float64, 1}, fs::Number, freq_start::Number, freq_stop::Number)
     N = length(sound)
-    tstep = 1/fs # sample time interval
-    t = LinRange(0, (N-1)*tstep, N) # time steps
-    fstep = fs/N # freq interval
-    freq = LinRange(0, (N-1)*fstep, N) # freq steps
+    tstep = 1/fs
+    t = LinRange(0, (N-1)*tstep, N)
+    fstep = fs/N
+    freq = LinRange(0, (N-1)*fstep, N)
     
     fhat = fft(sound)
     fhat[floor(Int, freq_start * N/freq[end]):ceil(Int, freq_stop * N/freq[end])] .= 0
@@ -249,7 +267,7 @@ function remove_frequency(sound::Array{Float64, 1}, fs::Number, freq_start::Numb
 end
 
 """
-    lowpass(sound, fs, cutting_point)
+    lowpass(sound::Array{Float64, 1}, fs::Number, cutting_point::Number)
 
 
 Funkcja wycinająca z nagrania wszyskie dźwięki o częstotliwościach większych niż 'cutting_point',
@@ -258,13 +276,13 @@ próbkowania sygnału wejściowego
 """
 function lowpass(sound::Array{Float64, 1}, fs::Number, cutting_point::Number)
     N = length(sound)
-    fstep = fs/N # freq interval
-    freq = LinRange(0, (N-1)*fstep, N) # freq steps
+    fstep = fs/N
+    freq = LinRange(0, (N-1)*fstep, N)
     remove_frequency(sound, fs, cutting_point, freq[Int(N/2)])
 end
 
 """
-    highpass(sound, fs, cutting_point)
+    highpass(sound::Array{Float64, 1}, fs::Number, cutting_point::Number)
 
 
 Funkcja wycinająca z nagrania wszyskie dźwięki o częstotliwościach mniejszych niż 'cutting_point',
@@ -273,13 +291,13 @@ próbkowania sygnału wejściowego
 """
 function highpass(sound::Array{Float64, 1}, fs::Number, cutting_point::Number)
     N = length(sound)
-    fstep = fs/N # freq interval
-    freq = LinRange(0, (N-1)*fstep, N) # freq steps
+    fstep = fs/N
+    freq = LinRange(0, (N-1)*fstep, N)
     remove_frequency(sound, fs, 1, cutting_point)
 end
 
 """
-    change_speed(sound,fs,speed,file_name)
+    change_speed(sound::Array{Float64, 1}, fs::Number, speed::Number, file_name::String)
 
 Funkcja do przyspieszania/zwalniania tempa odtwarzania, gdzie 'sound'
 to tablica zawierająca rozkład amplitudy w zależności od czasu, fs to
@@ -293,7 +311,7 @@ function change_speed(sound::Array{Float64, 1}, fs::Number, speed::Number, file_
 end
 
 """
-    change_volume(sound,volume)
+    change_volume(sound::Array{Float64, 1}, volume::Number)
 
 Funkcja do zmiany głośniści (ściszanie i zgłaśnianie), gdzie 'sound'
 to tablica zawierająca rozkład amplitudy w zależności od czasu, a volume
@@ -305,7 +323,7 @@ function change_volume(sound::Array{Float64, 1}, volume::Number)
 end
 
 """
-    cutting_time(sound,fs,start,stop)
+    cutting_time(sound::Array{Float64, 1}, fs::Number, start::Number=0, stop::Number)
 
 Funkcja do przycinania czasu nagrania, gdzie 'sound'to tablica zawierająca
 rozkład amplitudy w zależności od czasu, fs to częstotliwość próbkowania 
@@ -328,13 +346,13 @@ function cutting_time(sound::Array{Float64, 1}, fs::Number, start::Number=0, sto
 end
 
 """
-    loess(index,X,Y,m)
+    loess(index::Int64, X::Array{Float64, 1}, Y::Array{Float64, 1}, m::Int64)
 
 Oszacowanie wartości w zadanym (wartością 'index') punkcie z tablicy 'X',
 za pomocą regresji lokalnej. Y to zbiór wartości odpowiadających tablicy'X', a 2m+1 to
 szerokośc otoczenia
 """
-function loess(index::Number, X,Y,m)
+function loess(index::Int64, X::Array{Float64, 1}, Y::Array{Float64, 1}, m::Int64)
     if index <= m
         xs = X[1:(index+m)]
         ys = Y[1:(index+m)]
@@ -354,19 +372,19 @@ function loess(index::Number, X,Y,m)
 end
 
 """
-    smoothing(Y, m)
+    smoothing(Y::Array{Float64, 1}, m::Int64)
 
 Funkcja, która za pomocą loess znajduje przybliżenie funkcji zadanej przez tablicę 'Y'.
 Uzywamy do odszumiania nagran.
 """
-function smoothing(Y, m = 10)
+function smoothing(Y::Array{Float64, 1}, m::Int64 = 10)
     X = 1:length(Y)
     y = [loess(index, X, Y, m) for index in 1:length(X)]
     return y
 end
 
 """
-    from_behind(sound)
+    from_behind(sound::Array{Float64, 1})
 
 Funkcja sluzy do zapisu sygnału od końca"""
 function from_behind(sound::Array{Float64, 1})
